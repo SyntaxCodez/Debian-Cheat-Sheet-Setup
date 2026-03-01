@@ -1,0 +1,176 @@
+server: # REST and WS server
+  port: 2333
+  address: 0.0.0.0
+lavalink:
+  server:
+    password: "youshallnotpass"
+    sources:
+      youtube: false # put on false if you use youtube-plugin
+      bandcamp: true
+      soundcloud: true
+      twitch: true
+      vimeo: true
+      http: true
+      local: false
+    bufferDurationMs: 500 # The duration of the NAS buffer. Higher values fare better against longer GC pauses (lower == faster == more cpu usage == sometimes buggy) | SHOULD AT LEAST BE AS BIG AS YOUR DISCORD BOT PING (min. is 200)
+    frameBufferDurationMs: 5000 # How many milliseconds of audio to keep buffered | lower == faster == more cpu usage == not recommended to go lower then 1000
+    youtubePlaylistLoadLimit: 5 # Number of pages at 100 each
+    opusEncodingQuality: 10 # Opus encoder quality. Valid values range from 0 to 10, where 10 is best quality but is the most expensive on the CPU. ( you do not hear a difference between 0 and 10, and only see a cpu difference at 1k + connections )
+    resamplingQuality: LOW # Quality of resampling operations. Valid values are LOW, MEDIUM and HIGH, where HIGH uses the most CPU. ( you do not hear a difference )
+    trackStuckThresholdMs: 5000 # The threshold for how long a track can be stuck. A track is stuck if does not return any audio data. (default 10000, i recommend 5000 to keep it smooth, if you have sub 100mbps speed, then put it back to 10000)
+    playerUpdateInterval: 5 # How frequently to send player updates to clients, in seconds (If it's localhost, then you can also do 1 or 2, which wouldn't make any problems. lower == more traffic == more cpu usage especially at javascript
+    useSeekGhosting: true # Seek ghosting is the effect where whilst a seek is in progress, the audio buffer is read from until empty, or until seek is ready. (true == smooth transition (play filter once it's rendered) | false == instant (stop audio - render filter - play it) but you hear a short pause
+    youtubeSearchEnabled: true
+    soundcloudSearchEnabled: true
+    gc-warnings: true
+    #ratelimit:
+      #ipBlocks: ["1234:1234:1234:1234::/64"] # list of ip blocks
+      #excludedIps: ["...", "..."] # ips which should be explicit excluded from usage by lavalink
+      #strategy: "RotateOnBan" # RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch
+      #searchTriggersFail: true # Whether a search 429 should trigger marking the ip as failing
+      #retryLimit: -1 # -1 = use default lavaplayer value | 0 = infinity | >0 = retry will happen this numbers times
+    #youtubeConfig: # Required for avoiding all age restrictions by YouTube, some restricted videos still can be played without.
+      #email: "" # Email of Google account
+      #password: "" # Password of Google account
+    #httpConfig: # Useful for blocking bad-actors from ip-grabbing your music node and attacking it, this way only the http proxy will be attacked
+      #proxyHost: "localhost" # Hostname of the proxy, (ip or domain)
+      #proxyPort: 3128 # Proxy port, 3128 is the default for squidProxy
+      #proxyUser: "" # Optional user for basic authentication fields, leave blank if you don't use basic auth
+      #proxyPassword: "" # Password for basic authentication
+    plugins:
+        - dependency: 'dev.lavalink.youtube:youtube-plugin:1.16.0' # https://github.com/lavalink-devs/youtube-source
+        - dependency: 'com.github.topi314.lavasrc:lavasrc-plugin:4.8.1' # https://github.com/topi314/LavaSrc
+        - dependency: 'com.github.topi314.lavasearch:lavasearch-plugin:1.0.0' # https://github.com/topi314/LavaSearch
+        - dependency: 'com.dunctebot:skybot-lavalink-plugin:1.7.0' # https://github.com/DuncteBot/skybot-lavalink-plugin
+        - dependency: 'com.github.devoxin:lavadspx-plugin:0.0.5' # https://github.com/devoxin/LavaDSPX-Plugin
+          repository: 'https://jitpack.io'
+        - dependency: 'com.github.topi314.lavalyrics:lavalyrics-plugin:1.1.0' # https://github.com/topi314/LavaLyrics
+        - dependency: 'me.duncte123:java-lyrics-plugin:1.6.6' # https://github.com/DuncteBot/java-timed-lyrics
+plugins:
+    lyrics:
+        countryCode: de
+        geniusApiKey: "InIbz5Yw46rp5Xwto1SLEF0h8-gKjcEAWsYOlr3s0RVjKzBEY7vXBacm21B1rBpr"
+    lavalyrics:
+        sources:
+            - 'genius'
+            - 'spotify'
+            - 'deezer'
+            - 'youtube'
+            - 'yandexMusic'
+    youtube:
+        remoteCipher:
+            url: "http://[::]:2330" # The base URL of your remote cipher server.
+            password: "<cipherpass>" # The password to authenticate with your remote cipher server.
+            userAgent: "main-lavalink" # Optional user-agent header, used for metrics on the backend.
+        enabled: true
+        allowSearch: true
+        allowDirectVideoIds: true
+        allowDirectPlaylistIds: true
+        clients:
+            - "TVHTML5EMBEDDED"
+            - "TV"
+            - "MUSIC"
+            - "ANDROID_VR"
+            - "WEB"
+            - "WEBEMBEDDED"
+        MUSIC:
+            playback: false
+        TV:
+            playback: true
+        TVHTML5EMBEDDED:
+            playback: true
+        WEB:
+            playback: true
+        WEBEMBEDDED:
+            playlistLoading: false
+            searching: false
+        oauth:
+            enabled: true
+            refreshToken: "..."
+        pot:
+            token: "..."
+            visitorData: "..."
+    lavasrc:
+        providers:
+            - 'ytsearch:"%ISRC%"'
+            - 'dzisrc:%ISRC%'
+            - 'ytsearch:%QUERY%'
+            - 'dzsearch:%QUERY%'
+            - 'scsearch:%QUERY%'
+        sources:
+            spotify: true
+            applemusic: true
+            deezer: true
+            yandexmusic: true
+            flowerytts: true
+            youtube: true
+        lyrics-sources:
+            spotify: true
+            deezer: true
+            youtube: true
+            yandexmusic: true
+        spotify:
+            clientId: '...'
+            clientSecret: '...'
+            spDc: "..."
+            countryCode: 'US'
+            playlistLoadLimit: 6
+            albumLoadLimit: 4
+        applemusic:
+            countryCode: 'US'
+            mediaAPIToken: '...'
+            playlistLoadLimit: 6
+            albumLoadLimit: 6
+        deezer:
+            masterDecryptionKey: 'g..............1'
+            arl: '.....'
+        youtube:
+            countryCode: 'US'
+        yandexmusic:
+            accessToken: '....'
+            playlistLoadLimit: 4
+            albumLoadLimit: 8
+            artistLoadLimit: 8
+        flowerytts:
+            voice: 'Ava'
+            translate: false
+            silence: 0
+            speed: 1.0
+            audioFormat: 'mp3'
+    dunctebot:
+        ttsLanguage: 'en-US'
+        sources:
+            getyarn: true
+            clypit: true
+            tts: true
+            pornhub: true
+            reddit: true
+            ocremix: true
+            tiktok: true
+            mixcloud: true
+            soundgasm: true
+metrics:
+    prometheus:
+        enabled: false
+sentry:
+    dsn: ''
+    environment: ''
+logging:
+    file:
+        max-history: 1
+        max-size: 5MB
+    path: ./logs/
+    level:
+        root: INFO
+        lavalink: DEBUG
+    request:
+        enabled: true
+        includeClientInfo: true
+        includeHeaders: true
+        includeQueryString: true
+        includePayload: true
+        maxPayloadLength: 10000
+    logback:
+        rollingpolicy:
+            max-file-size: 5MB
+            max-history: 15
